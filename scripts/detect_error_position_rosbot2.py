@@ -10,15 +10,15 @@ import tf
 import os
 from actionlib_msgs.msg import GoalID
 from iot_msgs.msg import Point2
-from ar_func import PoseStamped_to_Numpyarray, compare_Rmatrix
+from ar_func import PoseStamped_to_Numpyarray2, compare_Rmatrix
 
 def callback(poses):
     robot_pose = poses.robot
     estimated_pose = poses.camera
     diff_x = abs(robot_pose.position.x - estimated_pose.position.x)
     diff_y = abs(robot_pose.position.y - estimated_pose.position.y)
-    _, QuatR, _ = PoseStamped_to_Numpyarray(robot_pose)
-    _, QuatE, _ = PoseStamped_to_Numpyarray(estimated_pose)
+    _, QuatR, _ = PoseStamped_to_Numpyarray2(robot_pose)
+    _, QuatE, _ = PoseStamped_to_Numpyarray2(estimated_pose)
 
     Rr = tf.transformations.quaternion_matrix(QuatR)[:3,:3]
     Re = tf.transformations.quaternion_matrix(QuatE)[:3,:3]

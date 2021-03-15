@@ -10,55 +10,14 @@ from sklearn.cluster import KMeans
 import tf
 from geometry_msgs.msg import PoseStamped
 import math
-
+from ar_func import read_csv, get_weight_position
+from ar_func import get_translate_matrix
 NODE_NAME = 'get_estimate_coordinates'
 input_file_path = rospy.get_param("/get_tmatrix/input_files", "./")
 #input_file_path = '/home/rb/ARenv/Pose_2020-07-14_143324'
 #output_file_path = '/home/rb/ARenv/Pose_' + datetime.datetime.now().strftime('%Y-%m-%d_%H%M%S')
 pose_file = input_file_path + '/pose.csv'
 ar_file = input_file_path + '/ar.csv'
-
-def read_csv(name):
-    csv_obj = csv.reader(open(name, "r"))
-    l = [row for row in csv_obj]
-    ary = np.array(l)
-    return np.delete(ary, 0, 1)
-
-def get_weight_position(pos_array):
-    kmeans = KMeans(n_clusters=3).fit(pos_array)
-    sort_centers = kmeans.cluster_centers_[kmeans.labels_[:3]]
-    return sort_centers
-
-def get_translate_matrix(r_poses, ar_poses):
-    y = r_poses[:, :3]
-    y1 = y[1, :] - y[0, :]
-    y2 = y[2, :] - y[0, :]
-    y3 = np.cross(y2,y1)
-    #y3 = np.cross(y1,y2)
-    Y = np.array([y1,y2,y3]).T
-    print("Y: ", Y)
-
-    x = ar_poses[:, :3]
-    x1 = x[1, :] - x[0, :]
-    x2 = x[2, :] - x[0, :]
-    x3 = np.cross(x2,x1)
-    #x3 = np.cross(x1,x2)
-    X = np.array([x1,x2,x3]).T
-    print("X: ", X)
-
-    A = np.dot(Y, np.linalg.inv(X))
-    print("A: ", A)
-    #print('############ REVERSE #######################')
-    #A = np.dot(A, np.array([[-1 ,0, 0],[0 ,-1, 0],[0 ,0, 1]]))
-    #print("A: ", A)
-
-    T1 = y[0, :] - np.dot(A, x[0, :])
-    T2 = y[1, :] - np.dot(A, x[1, :])
-    T3 = y[2, :] - np.dot(A, x[2, :])
-    print("T: ", T1, T2, T3)
-    Translate_CamM = RmatTvec_to_cameraMatrix(A, T1)
-    print("Translate Camera Matrix: ", Translate_CamM)
-    return Translate_CamM
 
 def quaternion_to_vector(quaternion):
     R = tf.transformations.quaternion_matrix(quaternion)[:3,:3]

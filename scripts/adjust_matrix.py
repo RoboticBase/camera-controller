@@ -9,23 +9,7 @@ import tf
 import os
 from sklearn.cluster import KMeans
 from geometry_msgs.msg import PoseStamped
-from ar_func import read_csv
-
-def latest_file(path, head_str, last_str):
-    latest_time = datetime.datetime.min
-    files = os.listdir(path)
-    files_dir = [f for f in files if os.path.isfile(os.path.join(path, f))]
-    for dir in files_dir:
-        if not dir.startswith(head_str):
-            continue
-        if not dir.endswith(last_str):
-            continue        
-        name = dir.rstrip(last_str)
-        dir_time = datetime.datetime.strptime(name.lstrip(head_str), '%Y-%m-%d_%H%M%S')
-        if dir_time > latest_time:
-            latest_time = dir_time
-            latest_dir = dir
-    return latest_dir
+from ar_func import read_csv, latest_file
 
 def main():
     try:

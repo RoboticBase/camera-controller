@@ -9,7 +9,7 @@ import math
 from sklearn.cluster import KMeans
 import tf
 from geometry_msgs.msg import PoseStamped
-
+from ar_func import read_csv, quaternion_to_vector
 NODE_NAME = 'get_estimate_coordinates'
 input_file_path = rospy.get_param("/get_tmatrix/input_files", "./")
 #input_file_path = '/home/rb/ARenv/Pose_2020-07-14_143324'
@@ -37,15 +37,6 @@ def estimate_position(T_camM, input):
     Est_pos = np.dot(T_camM, pos4)
     return Est_pos
 
-def quaternion_to_vector(quaternion):
-    R = tf.transformations.quaternion_matrix(quaternion)[:3,:3]
-    V = cv2.Rodrigues(R)[0]
-    return V
-def read_csv(name):
-    csv_obj = csv.reader(open(name, "r"))
-    l = [row for row in csv_obj]
-    ary = np.array(l)
-    return np.delete(ary, 0, 1)
 
 def get_weight_position(pos_array):
     kmeans = KMeans(n_clusters=3).fit(pos_array)

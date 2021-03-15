@@ -11,8 +11,6 @@ import os
 import datetime
 from ar_func import PoseStampedToText
 
-
-
 def report():
     global count
     msg1 = rospy.wait_for_message("/amcl_pose", PoseWithCovarianceStamped)

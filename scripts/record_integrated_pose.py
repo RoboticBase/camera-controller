@@ -12,16 +12,15 @@ from geometry_msgs.msg import PoseStamped
 from eams_msgs.msg import Control
 from iot_msgs.msg import Point2
 from ar_func import PoseStamped_to_Numpyarray, compare_Rmatrix
-from ar_func import PoseToText
+from ar_func import PoseToText2
 file_path = '/home/rb/camera_ws/src/rpl/config/log_image_robot/result.csv'
-
 
 flg = False
 def callback(poses):
     global count
     robot_pose = poses.robot
     estimated_pose = poses.camera
-    buf = PoseToText(count, robot_pose, estimated_pose)
+    buf = PoseToText2(count, robot_pose, estimated_pose)
     print(buf)
     with open(file_path, mode='a') as f:
         f.write(buf)

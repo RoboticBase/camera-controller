@@ -5,6 +5,8 @@ import rospy
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
 import datetime
 import os
+from ar_func import quaternion_to_vector, PoseStampedToText2
+
 NODE_NAME = 'comparison'
 file_path = rospy.get_param("file_path")
 
@@ -12,22 +14,6 @@ path = file_path + '/Diff_Pose_' + datetime.datetime.now().strftime('%Y-%m-%d_%H
 pose_file = path + '/pose.csv'
 ar_file = path + '/ar.csv'
 diff_file = path + '/diff.csv'
-
-def quaternion_to_vector(quaternion):
-    R = tf.transformations.quaternion_matrix(quaternion)[:3,:3]
-    V = cv2.Rodrigues(R)[0]
-    return V
-
-def PoseStampedToText(msg, msg_pose):
-    buf = str(msg.header.stamp.nsecs) + " ,"
-    buf = buf + str(msg_pose.pose.position.x) + " ,"
-    buf = buf + str(msg_pose.pose.position.y) + " ,"
-    buf = buf + str(msg_pose.pose.position.z) + " ,"
-    buf = buf + str(msg_pose.pose.orientation.x) + " ,"
-    buf = buf + str(msg_pose.pose.orientation.y) + " ,"
-    buf = buf + str(msg_pose.pose.orientation.z) + " ,"
-    buf = buf + str(msg_pose.pose.orientation.w) + "\n"
-    return buf
 
 def Diff_PoseStampedToText(msg1, msg2):
     buf = str(msg1.header.stamp.nsecs) + " ,"
@@ -43,10 +29,10 @@ def Diff_PoseStampedToText(msg1, msg2):
 def callback(msg):
     estimate = rospy.wait_for_message("/AR/estimated_pose", PoseStamped)
     if(msg.header.stamp.nsecs == estimate.header.stamp.nsecs):
-        buf = PoseStampedToText(msg, msg.pose)
+        buf = PoseStampedToText2(msg, msg.pose)
         with open(pose_file, mode='a') as f:
             f.write(buf)
-        buf = PoseStampedToText(estimate, estimate)
+        buf = PoseStampedToText2(estimate, estimate)
         with open(ar_file, mode='a') as f:
             f.write(buf)
         buf = Diff_PoseStampedToText(msg, estimate)
