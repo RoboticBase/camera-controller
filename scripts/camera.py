@@ -11,7 +11,7 @@ def main():
         pub = rospy.Publisher("image_raw", Image, queue_size=10)
         r = rospy.Rate(10)
         bridge = CvBridge()
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(device_id)
         cap.set(cv2.CAP_PROP_FPS, 10)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
@@ -33,6 +33,7 @@ def main():
 if __name__ == '__main__':
     try:
         NODE_NAME = 'camera'
+        device_id = rospy.get_param("device_id")
         main()
     except KeyboardInterrupt:
         pass
