@@ -2,15 +2,12 @@
 # -*- coding: utf-8 -*-
 import rospy
 import cv2
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
-import numpy as np
-from geometry_msgs.msg import PoseStamped
-from eams_msgs.msg import State
-from actionlib_msgs.msg import GoalStatusArray
-from std_msgs.msg import String
 import os
 import datetime
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import String
 from ar_func import PoseStampedToText
 
 def Capture(im, path, name):
@@ -50,7 +47,7 @@ def main():
 
 if __name__ == '__main__':
     try:
-        NODE_NAME = 'source_position_generator'
+        NODE_NAME = 'capture_position'
         bridge = CvBridge()
         file_path = rospy.get_param("file_path")
         prev_status = 0
