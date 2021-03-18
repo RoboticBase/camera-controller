@@ -1,18 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import rospy
-import csv
-import cv2
-import datetime
-import numpy as np
-import math
-import tf
 import os
-from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
+from std_msgs.msg import Header
+from geometry_msgs.msg import PoseStamped
 from actionlib_msgs.msg import GoalID
 from iot_msgs.msg import Point2
 import message_filters_py3 as message_filters
-from std_msgs.msg import Header
 
 def callback(robot_pose, camera_pose):
     h = Header()
@@ -29,10 +23,8 @@ def main():
         rospy.init_node(NODE_NAME)
         camera_pose_sub = message_filters.Subscriber("/AR/estimated_pose", PoseStamped)
         robot_pose_sub = message_filters.Subscriber("/RB/confution_pose", PoseStamped)
- 
         ts = message_filters.ApproximateTimeSynchronizer([robot_pose_sub, camera_pose_sub], 10, slop, allow_headerless=True)
         ts.registerCallback(callback)
-
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

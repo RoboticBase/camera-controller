@@ -1,17 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import rospy
-import csv
-import cv2
-import datetime
 import numpy as np
 import math
 import tf
-import os
 from std_msgs.msg import Header, Float32
-from geometry_msgs.msg import PoseStamped, Pose, PoseWithCovarianceStamped, Point, Quaternion
+from geometry_msgs.msg import PoseStamped, Pose, Point, Quaternion
 
-def oriToarray(ori):
+def orientationToArray(ori):
     return(np.array([ori.x ,ori.y, ori.z, ori.w]))
 
 def create_posestamped(header, pose):
@@ -23,8 +19,8 @@ def create_posestamped(header, pose):
     output.pose.position.x = pose.position.x + error.position.x
     output.pose.position.y = pose.position.y + error.position.y
     output.pose.position.z = pose.position.z + error.position.z
-    quat_in = oriToarray(pose.orientation)
-    quat_err = oriToarray(error.orientation)
+    quat_in = orientationToArray(pose.orientation)
+    quat_err = orientationToArray(error.orientation)
     quat_out = tf.transformations.quaternion_multiply(quat_in, quat_err)
     output.pose.orientation.x = quat_out[0]
     output.pose.orientation.y = quat_out[1]
@@ -58,8 +54,6 @@ def degree_cb(deg):
 def main():
     try:
         rospy.init_node(NODE_NAME)
-        #rospy.Subscriber("/mavros/local_position/pose", PoseStamped, mini2_cb, queue_size=10)
-        #rospy.Subscriber("/AR/init_pose", PoseStamped, mini2_cb, queue_size=10)
         rospy.Subscriber("/RB/estimated_pose", PoseStamped, mini2_cb, queue_size=10)
         rospy.Subscriber("/RB/confution_pose/position", Point, pose_cb, queue_size=10)
         rospy.Subscriber("/RB/confution_pose/degree", Float32, degree_cb, queue_size=10)

@@ -1,4 +1,5 @@
 <launch>
+  <param name="device_id" value="0"/>
   <param name="calibration_path" value="$(find rpl)/config/camera.xml" />
   <param name="file_path" value="$(find rpl)/config/source_position/"/>
   <param name="slop_ms" type="double"    value="1000.0"/>
@@ -11,7 +12,4 @@
 
   <node name="pose_integrator" pkg="rpl" type="pose_integrator.py" output="screen"/>
   <node name="pose_confusion" pkg="rpl"  type="pose_confusion.py" output="screen"/>
-  <!--
-  <node name="pose_init" pkg="rpl"  type="pose_init_minimini2.py" output="screen"/>
-  -->
 </launch>
