@@ -35,7 +35,7 @@ if __name__ == '__main__':
         NODE_NAME = 'estimate_ar_position'
         file_path = rospy.get_param("matrix_path")
         pose_file = file_path + "tmatrix_f_ar.csv"
-        print("READED tMatrix from ", pose_file)
+        rospy.loginfo("READED tMatrix from ", pose_file)
         csv_obj = csv.reader(open(pose_file, "r"))
         l = [row for row in csv_obj]
         tmatrix = np.array(l)

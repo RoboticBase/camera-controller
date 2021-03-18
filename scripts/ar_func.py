@@ -137,7 +137,7 @@ def get_translate_matrix(r_poses, ar_poses):
     y3 = np.cross(y2,y1)
     #y3 = np.cross(y1,y2)
     Y = np.array([y1,y2,y3]).T
-    print("Y: ", Y)
+    rospy.loginfo("Y: ", Y)
 
     x = ar_poses[:, :3]
     x1 = x[1, :] - x[0, :]
@@ -145,10 +145,10 @@ def get_translate_matrix(r_poses, ar_poses):
     x3 = np.cross(x2,x1)
     #x3 = np.cross(x1,x2)
     X = np.array([x1,x2,x3]).T
-    print("X: ", X)
+    rospy.loginfo("X: ", X)
 
     A = np.dot(Y, np.linalg.inv(X))
-    print("A: ", A)
+    rospy.loginfo("A: ", A)
     #print('############ REVERSE #######################')
     #A = np.dot(A, np.array([[-1 ,0, 0],[0 ,-1, 0],[0 ,0, 1]]))
     #print("A: ", A)
@@ -156,9 +156,9 @@ def get_translate_matrix(r_poses, ar_poses):
     T1 = y[0, :] - np.dot(A, x[0, :])
     T2 = y[1, :] - np.dot(A, x[1, :])
     T3 = y[2, :] - np.dot(A, x[2, :])
-    print("T: ", T1, T2, T3)
+    rospy.loginfo("T: ", T1, T2, T3)
     Translate_CamM = RmatTvec_to_cameraMatrix(A, T1)
-    print("Translate Camera Matrix: ", Translate_CamM)
+    rospy.loginfo("Translate Camera Matrix: ", Translate_CamM)
     return Translate_CamM
 
 def estimate(T_camM, input):

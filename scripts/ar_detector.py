@@ -38,7 +38,7 @@ def callback(msg):
     cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
     ids, rvecs, tvecs = detect_marker(cv_image, mtx, dist, dictionary, 0.2 )
     if ids is None:
-        print("not found Markers")
+        rospy.loginfo("not found Markers")
     else:
         draw_marker(cv_image, ids, mtx, dist, rvecs, tvecs)
         pub_data(rvecs, tvecs)

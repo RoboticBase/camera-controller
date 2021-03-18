@@ -35,7 +35,7 @@ def callback(msg):
         dst_name = "Dst%03.f"%(count)
         Capture(dst, path, dst_name)
         count+=1
-        print("Capturing & Logging")
+        rospy.loginfo("Capturing & Logging")
 
 def main():
     try:
