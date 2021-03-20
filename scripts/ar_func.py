@@ -5,14 +5,44 @@ import csv
 import numpy as np
 import cv2
 from tf.transformations import quaternion_from_matrix
+from tf.transformations import quaternion_from_euler
 from geometry_msgs.msg import PoseStamped
 import tf
-## translate Orientation##
+
+def column_to_csv(column):
+    buf = ""
+    for n in column:
+        buf = buf + str(n) + " ,"
+    buf = buf[:-2]
+    buf = buf + "\n"
+    return buf
+
+def matrix_to_csv(matrix):
+    buf = ""
+    for col in matrix:
+        buf = buf + column_to_csv(col)
+    return buf
+
+## translate Orientation
+def degrees_to_radians(degs):
+    return np.array([ d / 180 * math.pi for d in degs])
+
+def radian_to_quaternion(rad):
+    return quaternion_from_euler(rad[0], rad[1], rad[2])
+
+def radians_to_quaternions(rads):
+    return np.array([radian_to_quaternion(r) for r in rads])
+
+def degrees_to_quaternions(degs):
+    return radians_to_quaternions(degrees_to_radians(degs))
+
 def vector_to_matrix(vector):
     R = cv2.Rodrigues(vector)[0]
     return R
+
 def matrix_to_vector(matrix):
     return vector_to_matrix(matrix)
+
 def RotationVectorToQuaternion(rvecs):
     rvecs = np.squeeze(rvecs)
     R = cv2.Rodrigues(rvecs)[0]
@@ -20,16 +50,19 @@ def RotationVectorToQuaternion(rvecs):
     R = np.hstack((R, np.hstack([0,0,0,1])[np.newaxis, :].T))
     q = quaternion_from_matrix(R)
     return q
+
 def quaternion_to_vector(quaternion):
     R = tf.transformations.quaternion_matrix(quaternion)[:3,:3]
     V = cv2.Rodrigues(R)[0]
     return V
+
 def vector_to_quarernion(vector):
     R = vector_to_matrix(vector)
     C = np.vstack((R, np.zeros(R.shape[1])))
     C = np.hstack((C, np.hstack((np.zeros(R.shape[1]), np.ones(1)))[np.newaxis, :].T))
-    Q = tf.transformations.quaternion_from_matrix(C)
+    Q = quaternion_from_matrix(C)
     return Q
+
 def RmatTvec_to_cameraMatrix(R,T):
     C = np.vstack((R, np.zeros(R.shape[1])))
     C = np.hstack((C, np.hstack((T, np.ones(1)))[np.newaxis, :].T))
@@ -41,11 +74,13 @@ def read_csv(name):
     l = [row for row in csv_obj]
     ary = np.array(l)
     return np.delete(ary, 0, 1)
+
 def read_csv2(name):
     csv_obj = csv.reader(open(name, "r"))
     l = [row for row in csv_obj]
     ary = np.array(l)
     return ary
+
 def PoseToText(msg):
     buf = str(msg1.position.x) + " ,"
     buf = buf + str(msg1.position.y) + " ,"
@@ -62,6 +97,7 @@ def PoseStampedToText(count, msg):
     buf = buf + str(msg.pose.orientation.z) + " ,"
     buf = buf + str(msg.pose.orientation.w) + "\n"
     return buf
+
 def PoseToText2(count, msg1, msg2):
     buf = str(count) + " ,"
     buf = buf + PoseToText(msg1)
@@ -69,6 +105,7 @@ def PoseToText2(count, msg1, msg2):
     buf = buf + str(msg2.position.y) + " ,"
     buf = buf + str(msg2.position.z) + "\n"
     return buf
+
 def PoseStampedToText2(msg, msg_pose):
     buf = str(msg.header.stamp.nsecs) + " ,"
     buf = buf + str(msg_pose.pose.position.x) + " ,"
@@ -79,6 +116,7 @@ def PoseStampedToText2(msg, msg_pose):
     buf = buf + str(msg_pose.pose.orientation.z) + " ,"
     buf = buf + str(msg_pose.pose.orientation.w) + "\n"
     return buf
+
 def pub_data(rvecs, tvecs):
     q = RotationVectorToQuaternion(rvecs)
     tvecs = np.squeeze(tvecs)
@@ -100,6 +138,7 @@ def PoseStamped_to_Numpyarray(msg):
     Quat = np.array([msg.pose.orientation.x, msg.pose.orientation.y, msg.pose.orientation.z, msg.pose.orientation.w], dtype = 'float')
     TQ = np.array([msg.pose.position.x, msg.pose.position.y, msg.pose.position.z, msg.pose.orientation.x, msg.pose.orientation.y, msg.pose.orientation.z, msg.pose.orientation.w], dtype = 'float')
     return Tvec, Quat, TQ
+
 def PoseStamped_to_Numpyarray2(msg):
     Tvec = np.array([msg.position.x, msg.position.y, msg.position.z], dtype = 'float')
     Quat = np.array([msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w], dtype = 'float')
@@ -135,7 +174,6 @@ def get_translate_matrix(r_poses, ar_poses):
     y1 = y[1, :] - y[0, :]
     y2 = y[2, :] - y[0, :]
     y3 = np.cross(y2,y1)
-    #y3 = np.cross(y1,y2)
     Y = np.array([y1,y2,y3]).T
     rospy.loginfo("Y: ", Y)
 
@@ -143,16 +181,11 @@ def get_translate_matrix(r_poses, ar_poses):
     x1 = x[1, :] - x[0, :]
     x2 = x[2, :] - x[0, :]
     x3 = np.cross(x2,x1)
-    #x3 = np.cross(x1,x2)
     X = np.array([x1,x2,x3]).T
     rospy.loginfo("X: ", X)
 
     A = np.dot(Y, np.linalg.inv(X))
     rospy.loginfo("A: ", A)
-    #print('############ REVERSE #######################')
-    #A = np.dot(A, np.array([[-1 ,0, 0],[0 ,-1, 0],[0 ,0, 1]]))
-    #print("A: ", A)
-
     T1 = y[0, :] - np.dot(A, x[0, :])
     T2 = y[1, :] - np.dot(A, x[1, :])
     T3 = y[2, :] - np.dot(A, x[2, :])
