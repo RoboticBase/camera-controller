@@ -1,7 +1,7 @@
 <launch>
   <param name="device_id" value="0"/>
   <param name="calibration_path" value="$(find rpl)/config/camera.xml" />
-  <param name="file_path" value="$(find rpl)/config/log_image_robot/"/>
+  <param name="file_path" value="$(find rpl)/config/source_position/"/>
   <node name="camera" pkg="rpl" type="camera.py" output="screen"/>
   <node name="ar" pkg="rpl" type="ar_detector.py" output="screen"/>
   <node name="capture_position" pkg="rpl" type="capture_position.py" output="screen"/>
