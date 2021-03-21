@@ -1,4 +1,0 @@
-<launch>
-  <include file="$(find rpl)/launch/estimate_position.launch" />  
-  <node name="demo" pkg="rpl"  type="demo.py" output="screen"/>
-</launch>
