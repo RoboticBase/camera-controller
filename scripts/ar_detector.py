@@ -8,7 +8,30 @@ import numpy as np
 import cv2.aruco as aruco
 from geometry_msgs.msg import PoseStamped
 from tf.transformations import quaternion_from_matrix
-from ar_func import pub_data
+
+def RotationVectorToQuaternion(rvecs):
+    rvecs = np.squeeze(rvecs)
+    R = cv2.Rodrigues(rvecs)[0]
+    R = np.vstack((R, np.zeros(R.shape[1])))
+    R = np.hstack((R, np.hstack([0,0,0,1])[np.newaxis, :].T))
+    q = quaternion_from_matrix(R)
+    return q
+
+def pub_data(rvecs, tvecs):
+    q = RotationVectorToQuaternion(rvecs)
+    tvecs = np.squeeze(tvecs)
+    p = PoseStamped()
+    p.header.frame_id = "camera"
+    p.header.stamp = rospy.Time.now()
+    p.pose.position.x = tvecs[0]
+    p.pose.position.y = tvecs[1]
+    p.pose.position.z = tvecs[2]
+    p.pose.orientation.x = q[0]
+    p.pose.orientation.y = q[1]
+    p.pose.orientation.z = q[2]
+    p.pose.orientation.w = q[3]
+    pub_pose = rospy.Publisher("/AR/camera_pose", PoseStamped, queue_size=10)
+    pub_pose.publish(p)
 
 def detect_marker(frame, mtx, dist, dictionary, marker_size=0.184):
     parameters =  aruco.DetectorParameters_create()
