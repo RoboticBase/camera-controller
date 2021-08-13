@@ -2,7 +2,7 @@
   <param name="device_id" value="4"/>
   <param name="calibration_path" value="$(find camera-controller)/config/camera.xml" />
   <node name="camera" pkg="camera-controller" type="camera.py" output="screen"/>
-  <node name="calibration" pkg="camera-controller" type="calibration.py" output="screen"/>
+  <node name="calibrate" pkg="camera-controller" type="calibrate.py" output="screen"/>
   <node name="image_view" pkg="image_view" type="image_view" output="screen">
     <remap from="image" to="calib_image" />
   </node>
