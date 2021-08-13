@@ -9,6 +9,10 @@ import cv2.aruco as aruco
 from geometry_msgs.msg import PoseStamped
 from tf.transformations import quaternion_from_matrix
 
+import sys
+sys.path.append('../../../../scripts/')
+from calibration import undistort, read_yaml, detect_marker, draw_marker, VectorsToPoseStamped
+
 def RotationVectorToQuaternion(rvecs):
     rvecs = np.squeeze(rvecs)
     R = cv2.Rodrigues(rvecs)[0]
@@ -32,30 +36,6 @@ def pub_data(rvecs, tvecs):
     p.pose.orientation.w = q[3]
     pub_pose = rospy.Publisher("/AR/camera_pose", PoseStamped, queue_size=10)
     pub_pose.publish(p)
-
-def detect_marker(frame, mtx, dist, dictionary, marker_size=0.184):
-    parameters =  aruco.DetectorParameters_create()
-    parameters.cornerRefinementMethod = aruco.CORNER_REFINE_CONTOUR
-    corners, ids, rejectedImgPoints = aruco.detectMarkers(frame, dictionary, parameters=parameters)
-    rvecs, tvecs, _objPoints = aruco.estimatePoseSingleMarkers(corners, marker_size, mtx, dist)
-    return ids, rvecs, tvecs
-
-def draw_marker(frame, ids, mtx, dist, rvecs, tvecs):
-    for i in range(ids.size):
-        r = np.squeeze(rvecs[i])
-        t = np.squeeze(tvecs[i])
-        aruco.drawAxis(frame, mtx, dist, r, t, 0.1)
-        R = cv2.Rodrigues(r)[0]
-        T = t[np.newaxis, :].T
-        proj_matrix = np.hstack((R, T))
-        euler_angle = cv2.decomposeProjectionMatrix(proj_matrix)[6] # [deg]
-        cv2.putText(frame, "X: %.1f cm" % (t[0] * 100),  (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0))
-        cv2.putText(frame, "Y: %.1f cm" % (t[1] * 100),  (0, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0))
-        cv2.putText(frame, "Z: %.1f cm" % (t[2] * 100),  (0, 90), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0))
-        cv2.putText(frame, "R: %.1f deg" % (euler_angle[0]),  (0, 130), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0))
-        cv2.putText(frame, "P: %.1f deg" % (euler_angle[1]),  (0, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0))
-        cv2.putText(frame, "Y: %.1f deg" % (euler_angle[2]),  (0, 180), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0))
-    return frame
 
 def callback(msg):
     cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
