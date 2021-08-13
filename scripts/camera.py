@@ -13,10 +13,8 @@ def main():
         bridge = CvBridge()
         cap = cv2.VideoCapture(device_id)
         cap.set(cv2.CAP_PROP_FPS, 10)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-        #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
-        #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 540)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
         ret, frame = cap.read()
         while not rospy.is_shutdown():
@@ -34,6 +32,8 @@ if __name__ == '__main__':
     try:
         NODE_NAME = 'camera'
         device_id = rospy.get_param("device_id")
+        width = rospy.get_param("width", 1920)
+        height = rospy.get_param("height", 1080)
         main()
     except KeyboardInterrupt:
         pass
