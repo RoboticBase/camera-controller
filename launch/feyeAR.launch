@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find camera-controller)/launch/feyeCalib.launch" />
+  <node name="fisheye_ar" pkg="camera-controller" type="fisheye_ar_detector.py" output="screen" cwd="node"/>
+</launch>

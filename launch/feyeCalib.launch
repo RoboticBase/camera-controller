@@ -1,0 +1,3 @@
+<launch>
+  <node name="fisheye_calibrate" pkg="camera-controller" type="fisheye_calibrate.py" output="screen" cwd="node"/>
+</launch>
