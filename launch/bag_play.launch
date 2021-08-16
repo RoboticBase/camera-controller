@@ -1,0 +1,4 @@
+<launch>
+   <node pkg="rosbag" type="play" name="rosbag_play" output="screen" required="true"
+         args=""/>
+</launch>
