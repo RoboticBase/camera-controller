@@ -7,7 +7,7 @@ from cv_bridge import CvBridge
 
 import sys
 sys.path.append('../../../../scripts/')
-from calibration import undistort, read_yaml
+from calibration import undistort, camera_param
 
 def callback(msg):
     cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
@@ -29,7 +29,7 @@ if __name__ == '__main__':
         bridge = CvBridge()
         pub = rospy.Publisher("calib_image", Image, queue_size=10)
 
-        DIM, K, D = read_yaml('../../../../config/calibration.yml')
+        DIM, K, D = camera_param('../../../../config/calibration.yml')
 
         main()
     except KeyboardInterrupt:

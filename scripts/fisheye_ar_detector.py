@@ -11,7 +11,7 @@ from tf.transformations import quaternion_from_matrix
 
 import sys
 sys.path.append('../../../../scripts/')
-from calibration import undistort, read_yaml, detect_marker, draw_marker
+from calibration import undistort, camera_param, detect_marker, draw_marker
 from rotation import VectorsToPoseStamped
 
 def callback(msg):
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
 
         dictionary = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
-        DIM, K, D = read_yaml('../../../../config/calibration.yml')
+        DIM, K, D = camera_param('../../../../config/calibration.yml')
 
         main()
     except KeyboardInterrupt:

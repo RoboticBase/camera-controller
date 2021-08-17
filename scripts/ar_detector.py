@@ -11,15 +11,8 @@ from tf.transformations import quaternion_from_matrix
 
 import sys
 sys.path.append('../../../../scripts/')
-from calibration import undistort, read_yaml, detect_marker, draw_marker, VectorsToPoseStamped
-
-def RotationVectorToQuaternion(rvecs):
-    rvecs = np.squeeze(rvecs)
-    R = cv2.Rodrigues(rvecs)[0]
-    R = np.vstack((R, np.zeros(R.shape[1])))
-    R = np.hstack((R, np.hstack([0,0,0,1])[np.newaxis, :].T))
-    q = quaternion_from_matrix(R)
-    return q
+from calibration import undistort, camera_param, detect_marker, draw_marker, VectorsToPoseStamped
+from rotation import RotationVectorToQuaternion
 
 def pub_data(rvecs, tvecs):
     q = RotationVectorToQuaternion(rvecs)
