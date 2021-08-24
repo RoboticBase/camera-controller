@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import rospy
-import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
@@ -18,7 +17,8 @@ def callback(msg):
 def main():
     try:
         rospy.init_node(NODE_NAME)
-        rospy.Subscriber("image_raw", Image, callback, queue_size=10)
+        topic_name = "/" + name + "/image_raw"
+        rospy.Subscriber(topic_name, Image, callback, queue_size=10)
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
@@ -27,7 +27,9 @@ if __name__ == '__main__':
     try:
         NODE_NAME = 'calibration'
         bridge = CvBridge()
-        pub = rospy.Publisher("calib_image", Image, queue_size=10)
+        name = rospy.get_param("name", "camera")
+        topic_name = "/" + name + "/calib_image"
+        pub = rospy.Publisher(topic_name, Image, queue_size=10)
 
         DIM, K, D = camera_param('../../../../config/calibration.yml')
 

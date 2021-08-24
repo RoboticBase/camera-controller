@@ -12,7 +12,7 @@ from tf.transformations import quaternion_from_matrix
 import sys
 sys.path.append('../../../../scripts/')
 from calibration import undistort, camera_param, detect_marker, draw_marker
-from rotation import VectorsToPoseStamped
+from RosMsgs import VectorsToPoseStamped
 
 def callback(msg):
     cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
@@ -31,7 +31,7 @@ def callback(msg):
 def main():
     try:
         rospy.init_node(NODE_NAME)
-        rospy.Subscriber("calib_image", Image, callback, queue_size=10)
+        rospy.Subscriber(topic_name + "/calib_image", Image, callback, queue_size=10)
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
@@ -40,9 +40,11 @@ if __name__ == '__main__':
     try:
         NODE_NAME = 'ar_detector'
         bridge = CvBridge()
-        pub = rospy.Publisher("/AR/camera_image", Image, queue_size=10)
-        pub_pose = rospy.Publisher("/AR/camera_pose", PoseStamped, queue_size=10)
+        name = rospy.get_param("name", "camera")
+        topic_name = "/" + name
 
+        pub = rospy.Publisher(topic_name + "/AR/camera_image", Image, queue_size=10)
+        pub_pose = rospy.Publisher(topic_name + "/AR/camera_pose", PoseStamped, queue_size=10)
 
         dictionary = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
         DIM, K, D = camera_param('../../../../config/calibration.yml')
