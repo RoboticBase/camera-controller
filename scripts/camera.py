@@ -8,7 +8,8 @@ from cv_bridge import CvBridge
 def main():
     try:
         rospy.init_node(NODE_NAME)
-        pub = rospy.Publisher("image_raw", Image, queue_size=10)
+        topic_name = "/" + name + "/image_raw"
+        pub = rospy.Publisher(topic_name, Image, queue_size=10)
         r = rospy.Rate(10)
         bridge = CvBridge()
         cap = cv2.VideoCapture(device_id)
@@ -34,6 +35,7 @@ if __name__ == '__main__':
         device_id = rospy.get_param("device_id")
         width = rospy.get_param("width", 1920)
         height = rospy.get_param("height", 1080)
+        name = rospy.get_param("name", "camera")
         main()
     except KeyboardInterrupt:
         pass
