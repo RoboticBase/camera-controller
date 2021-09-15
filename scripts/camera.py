@@ -23,8 +23,8 @@ class CameraPublisher(object):
 
     def publish(self):
         self.ret, self.im = self.read()
-        image_message = self.bridge.cv2_to_imgmsg(self.im, encoding="bgr8")
-        self.publisher.publish(image_message)
+        self.message = self.bridge.cv2_to_imgmsg(self.im, encoding="bgr8")
+        self.publisher.publish(self.message)
 
     def repeat(self):
         if self.ret == False:
@@ -51,8 +51,8 @@ if __name__ == '__main__':
         width = rospy.get_param("width", 1920)
         height = rospy.get_param("height", 1080)
         name = rospy.get_param("name", "camera")
-        rospy.init_node(NODE_NAME)
         topic_name = "/" + name + "/image_raw"
+        rospy.init_node(NODE_NAME)
         main()
     except KeyboardInterrupt:
         pass
