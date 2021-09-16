@@ -47,12 +47,12 @@ def main():
 if __name__ == '__main__':
     try:
         NODE_NAME = 'camera'
-        device_id = rospy.get_param("device_id")
+        rospy.init_node(NODE_NAME)
+        device_id = rospy.get_param("~device_id")
         width = rospy.get_param("width", 1920)
         height = rospy.get_param("height", 1080)
-        name = rospy.get_param("name", "camera")
+        name = rospy.get_param("~name", "camera")
         topic_name = "/" + name + "/image_raw"
-        rospy.init_node(NODE_NAME)
         main()
     except KeyboardInterrupt:
         pass
