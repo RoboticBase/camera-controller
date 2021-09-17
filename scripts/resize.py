@@ -14,8 +14,7 @@ def callback(msg):
 
 def main():
     try:
-        rospy.init_node(NODE_NAME)
-        rospy.Subscriber("/C1/AR/camera_image", Image, callback, queue_size=10)
+        rospy.Subscriber(topic, Image, callback, queue_size=10)
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
@@ -23,10 +22,11 @@ def main():
 if __name__ == '__main__':
     try:
         NODE_NAME = 'resize'
+        rospy.init_node(NODE_NAME)
         bridge = CvBridge()
-        name = rospy.get_param("name", "camera")
-        topic_name = "/" + name + "/resized"
-        pub = rospy.Publisher(topic_name, Image, queue_size=10)
+        topic = rospy.get_param("~topic", "/image_raw")
+        pubtopic = topic + "/resized"
+        pub = rospy.Publisher(pubtopic, Image, queue_size=10)
         main()
     except KeyboardInterrupt:
         pass
