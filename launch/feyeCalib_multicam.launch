@@ -1,0 +1,35 @@
+<launch>
+  <include file="$(find camera-controller)/launch/multicamera.launch" />
+  <node name="fisheye_calibrate1" pkg="camera-controller" type="fisheye_calibrate.py" output="screen" >
+    <param name="calibparam" value="$(find camera-controller)/config/calibration.yml" />
+    <param name="name" value="C1"/>
+  </node>
+
+  <node name="fisheye_calibrate2" pkg="camera-controller" type="fisheye_calibrate.py" output="screen" >
+    <param name="calibparam" value="$(find camera-controller)/config/calibration.yml" />
+    <param name="name" value="C2"/>
+  </node>
+  <node name="fisheye_calibrate3" pkg="camera-controller" type="fisheye_calibrate.py" output="screen" >
+    <param name="calibparam" value="$(find camera-controller)/config/calibration.yml" />
+    <param name="name" value="C3"/>
+  </node>
+  <node name="resize1" pkg="camera-controller" type="resize.py" output="screen">
+     <param name="topic" value="/C1/calib_image"/>
+  </node>
+  <node name="resize2" pkg="camera-controller" type="resize.py" output="screen">
+     <param name="topic" value="/C2/calib_image"/>
+  </node>
+  <node name="resize3" pkg="camera-controller" type="resize.py" output="screen">
+     <param name="topic" value="/C3/calib_image"/>
+  </node>
+  <node name="image_view1" pkg="image_view" type="image_view" output="screen">
+    <remap from="image" to="/C1/calib_image/resized" />
+  </node>
+  <node name="image_view2" pkg="image_view" type="image_view" output="screen">
+    <remap from="image" to="/C2/calib_image/resized" />
+  </node>
+  <node name="image_view3" pkg="image_view" type="image_view" output="screen">
+    <remap from="image" to="/C3/calib_image/resized" />
+  </node>
+
+</launch>
