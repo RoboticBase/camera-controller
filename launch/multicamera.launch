@@ -2,17 +2,15 @@
   <param name="width" value="1920"/>
   <param name="height" value="1920"/>
   <node name="camera1" pkg="camera-controller" type="camera.py" output="screen">
-    <param name="device_id" value="0"/>
+    <param name="device_id" value="4"/>
     <param name="name" value="C1"/>
   </node>
   <node name="camera2" pkg="camera-controller" type="camera.py" output="screen">
-    <param name="device_id" value="1"/>
+    <param name="device_id" value="6"/>
     <param name="name" value="C2"/>
   </node>
   <node name="camera3" pkg="camera-controller" type="camera.py" output="screen">
-    <param name="device_id" value="2"/>
+    <param name="device_id" value="8"/>
     <param name="name" value="C3"/>
   </node>
-
-
 </launch>
