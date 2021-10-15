@@ -9,10 +9,32 @@ import cv2.aruco as aruco
 from geometry_msgs.msg import PoseStamped
 from tf.transformations import quaternion_from_matrix
 
-import sys
-sys.path.append('../../../../scripts/')
-from calibration import undistort, camera_param, detect_marker, draw_marker
+from fisheye_calibrate import camera_param
 from RosMsgs import VectorsToPoseStamped
+
+def draw_marker(frame, ids, mtx, dist, rvecs, tvecs):
+    for i in range(ids.size):
+        r = np.squeeze(rvecs[i])
+        t = np.squeeze(tvecs[i])
+        aruco.drawAxis(frame, mtx, dist, r, t, 0.1)
+        R = cv2.Rodrigues(r)[0]
+        T = t[np.newaxis, :].T
+        proj_matrix = np.hstack((R, T))
+        euler_angle = cv2.decomposeProjectionMatrix(proj_matrix)[6] # [deg]
+        cv2.putText(frame, "X: %.1f cm" % (t[0] * 100),  (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
+        cv2.putText(frame, "Y: %.1f cm" % (t[1] * 100),  (0, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
+        cv2.putText(frame, "Z: %.1f cm" % (t[2] * 100),  (0, 90), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
+        cv2.putText(frame, "R: %.1f deg" % (euler_angle[0]),  (0, 130), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
+        cv2.putText(frame, "P: %.1f deg" % (euler_angle[1]),  (0, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
+        cv2.putText(frame, "Y: %.1f deg" % (euler_angle[2]),  (0, 180), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
+    return frame
+
+def detect_marker(frame, dictionary, K, D, marker_size=0.184):
+    parameters =  aruco.DetectorParameters_create()
+    parameters.cornerRefinementMethod = aruco.CORNER_REFINE_CONTOUR
+    corners, ids, rejectedImgPoints = aruco.detectMarkers(frame, dictionary, parameters=parameters)#, cameraMatrix=K, distCoeff=D)
+    rvecs, tvecs, _objPoints = aruco.estimatePoseSingleMarkers(corners, marker_size, K, D)
+    return corners, ids, rvecs, tvecs
 
 def callback(msg):
     cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
@@ -30,7 +52,6 @@ def callback(msg):
 
 def main():
     try:
-        rospy.init_node(NODE_NAME)
         rospy.Subscriber(topic_name + "/calib_image", Image, callback, queue_size=10)
         rospy.spin()
     except rospy.ROSInterruptException:
@@ -40,14 +61,16 @@ if __name__ == '__main__':
     try:
         NODE_NAME = 'ar_detector'
         bridge = CvBridge()
-        name = rospy.get_param("name", "camera")
+        rospy.init_node(NODE_NAME)
+        name = rospy.get_param("~name", "camera")
         topic_name = "/" + name
 
         pub = rospy.Publisher(topic_name + "/AR/camera_image", Image, queue_size=10)
         pub_pose = rospy.Publisher(topic_name + "/AR/camera_pose", PoseStamped, queue_size=10)
 
         dictionary = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
-        DIM, K, D = camera_param('../../../../config/calibration.yml')
+        calib_path = rospy.get_param("~calibparam")
+        DIM, K, D = camera_param(calib_path)
 
         main()
     except KeyboardInterrupt:

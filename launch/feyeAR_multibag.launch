@@ -1,5 +1,5 @@
 <launch>
-  <include file="$(find camera-controller)/launch/multicamera.launch" />
+  <include file="$(find camera-controller)/launch/bag_play.launch" />
 
   <node name="fisheye_calibrate1" pkg="camera-controller" type="fisheye_calibrate.py" output="screen" >
     <param name="calibparam" value="$(find camera-controller)/config/calibration.yml" />
@@ -14,14 +14,26 @@
     <param name="name" value="C3"/>
   </node>
 
+  <node name="fisheye_ar1" pkg="camera-controller" type="fisheye_ar_detector.py" output="screen" cwd="node">
+    <param name="calibparam" value="$(find camera-controller)/config/calibration.yml" />
+    <param name="name" value="C1"/>
+  </node>
+  <node name="fisheye_ar2" pkg="camera-controller" type="fisheye_ar_detector.py" output="screen" cwd="node">
+    <param name="calibparam" value="$(find camera-controller)/config/calibration.yml" />
+    <param name="name" value="C2"/>
+  </node>
+  <node name="fisheye_ar3" pkg="camera-controller" type="fisheye_ar_detector.py" output="screen" cwd="node">
+    <param name="calibparam" value="$(find camera-controller)/config/calibration.yml" />
+    <param name="name" value="C3"/>
+  </node>
   <node name="resize1" pkg="camera-controller" type="resize.py" output="screen">
-     <param name="topic" value="/C1/calib_image"/>
+     <param name="topic" value="/C1/AR/camera_image"/>
   </node>
   <node name="resize2" pkg="camera-controller" type="resize.py" output="screen">
-     <param name="topic" value="/C2/calib_image"/>
+     <param name="topic" value="/C2/AR/camera_image"/>
   </node>
   <node name="resize3" pkg="camera-controller" type="resize.py" output="screen">
-     <param name="topic" value="/C3/calib_image"/>
+     <param name="topic" value="/C3/AR/camera_image"/>
   </node>
 
 </launch>

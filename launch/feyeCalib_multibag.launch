@@ -1,5 +1,5 @@
 <launch>
-  <include file="$(find camera-controller)/launch/multicamera.launch" />
+  <include file="$(find camera-controller)/launch/bag_play.launch" />
 
   <node name="fisheye_calibrate1" pkg="camera-controller" type="fisheye_calibrate.py" output="screen" >
     <param name="calibparam" value="$(find camera-controller)/config/calibration.yml" />

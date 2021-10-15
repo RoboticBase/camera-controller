@@ -1,0 +1,21 @@
+<launch>
+  <node name="image_view1" pkg="image_view" type="image_view" output="screen">
+  <!--
+    <remap from="image" to="/C1/AR/camera_image/resized" />
+  -->
+    <remap from="image" to="/C1/image_raw" />
+    
+  </node>
+  <node name="image_view2" pkg="image_view" type="image_view" output="screen">
+  <!--
+    <remap from="image" to="/C2/AR/camera_image/resized" />
+  -->
+    <remap from="image" to="/C2/image_raw" />
+  </node>
+  <node name="image_view3" pkg="image_view" type="image_view" output="screen">
+  <!--
+    <remap from="image" to="/C3/AR/camera_image/resized" />
+  -->
+    <remap from="image" to="/C3/image_raw" />
+  </node>
+</launch>

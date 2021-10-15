@@ -1,0 +1,10 @@
+<launch>
+
+  <node name="view_images" pkg="camera-controller" type="view_images.py" output="screen">
+    <remap from="image1" to="/C1/image_raw" />
+    <remap from="image2" to="/C2/image_raw" />
+    <remap from="image3" to="/C3/image_raw" />
+    <param name="w_name" value="merge"/>
+   
+  </node>
+</launch>

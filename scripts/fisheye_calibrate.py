@@ -8,6 +8,7 @@ import cv2
 import glob
 import yaml
 import numpy as np
+
 def read_yml(path):
     with open(path, 'r') as yml:
         f = yaml.safe_load(yml)
@@ -24,7 +25,7 @@ def undistort(img, DIM, K, D):
     dim2=None
     dim3=None
     balance=1
-    dim1 = img.shape[:2][::-1]t
+    dim1 = img.shape[:2][::-1]
     assert dim1[0]/dim1[1] == DIM[0]/DIM[1], "Image to undistort needs to have same aspect ratio as the ones used in calibration"
     if not dim2:
         dim2 = dim1
