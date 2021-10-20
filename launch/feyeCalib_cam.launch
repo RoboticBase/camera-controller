@@ -2,6 +2,6 @@
   <include file="$(find camera-controller)/launch/camera.launch" />
   <include file="$(find camera-controller)/launch/feyeCalib.launch" />
   <node name="image_view" pkg="image_view" type="image_view" output="screen">
-    <remap from="image" to="calib_image" />
+    <remap from="image" to="/C1/calib_image" />
   </node>
 </launch>

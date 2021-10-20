@@ -41,7 +41,8 @@ def callback(msg):
     gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
     corners, ids, rvecs, tvecs = detect_marker(gray, dictionary, K, np.zeros((4, 1)))
     if ids is None:
-        rospy.loginfo("not found Markers")
+	pass
+        #rospy.loginfo("not found Markers")
     else:
         draw_marker(cv_image, ids, K, np.zeros((4, 1)), rvecs, tvecs)
         p = VectorsToPoseStamped(rvecs, tvecs, "camera")
